@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Bible Plan Configurator</title>
+  <!-- You MUST include jQuery before Fomantic -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.1/dist/jquery.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.0/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.0/dist/semantic.min.js"></script>
+  <script src="index.js"></script>
+</head>
+<body>
+  <div class="ui container">
+    <div class="ui segment">
+      <h1 class="ui centered header">Bible Plan Configurator</h1>
+      <div class="ui fluid left icon input">
+        <input id="input-bot" type="text" placeholder="Discord Bot Name">
+        <i class="robot icon"></i>
+      </div>
+
+      <div class="ui fluid left icon input">
+        <input id="input-image" type="text" placeholder="Image Link">
+        <i class="image icon"></i>
+      </div>
+
+      <div class="ui fluid left icon input">
+        <input id="input-webhook" type="text" placeholder="Webhook URL">
+        <i class="chain icon"></i>
+      </div>
+
+      <div class="ui fluid left icon input">
+        <input id="input-csv" type="text" placeholder=".csv file">
+        <i class="scroll icon"></i>
+      </div>
+      <div class="ui calendar" id="standard_calendar">
+        <div class="ui input left icon">
+          <i class="calendar icon"></i>
+          <input id="input-calendar" type="text" placeholder="Starting Date">
+        </div>
+      </div>
+      <button class="ui button" onclick = "downloadFile()">
+        Generate
+      </button>
+      <script>
+        const downloadFile = () => {
+          const link = document.createElement("a");
+          const botname = document.querySelector("#input-bot").value || 'Plan Bot';
+          const image = document.querySelector("#input-image").value || 'https://cdn.pixabay.com/photo/2022/02/20/09/43/animal-7024108_960_720.png';
+          const webhook = document.querySelector("#input-webhook").value || 'https://discord.com/api/webhooks/a/b';
+          const mywebhook = webhook.split("/");
+          const webhookId = mywebhook[5];
+          const webhookToken = mywebhook[6];
+          const csvfile = document.querySelector("#input-csv").value || 'plan.csv';
+          var calendar = new Date(document.querySelector("#input-calendar").value);
+          if (isNaN(calendar))
+          {
+            calendar = new Date();
+          }
+          const content = '{ "hooks" : ['
+          + '{'
+          + '"botname": "' + botname + '",'
+          + '"image": "' + image + '",'
+          + '"webhookId": "'+ webhookId + '",'
+          + '"webhookToken": "'+ webhookToken + '",'
+          + '"csvfile": "'+ csvfile + '",'
+          + '"startdate": "'+ calendar.getTime()
+          + '"}]'
+          + '}';
+
+          const file = new Blob(
+          [content],
+          { type: 'application/json' }
+          );
+          console.log(calendar.getTime());
+          link.href = URL.createObjectURL(file);
+          link.download = "config.json";
+          link.click();
+          URL.revokeObjectURL(link.href);
+        };
+      </script>
+    </div>
+  </body>
+  </html>
